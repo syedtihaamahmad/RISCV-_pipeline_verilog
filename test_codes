@@ -1,0 +1,153 @@
+//NOTE: Press rstn in the beginning
+
+// Hazard handled
+Assembly:
+sub x2, x1, x3
+and x12, x2, x5
+or x13, x6, x2
+add x14, x2, x2
+sw x15, 2(x2)
+
+Machine code:
+40308133
+00517633
+002366b3
+00210733
+00f12123
+
+
+
+
+// Hazard handled
+Assembly:
+add x1,x1,x2
+add x1,x1,x3
+add x1,x1,x4
+
+002080b3
+003080b3
+004080b3
+
+//mem2mem transfer: Handled
+lw x2, 0(x0)
+sw x2, 10(x0)
+
+//-------------------------------  overall test code 1 -----------------------------//
+addi x1,x0,5
+add x2,x1,x1
+add x3,x1,x1
+add x4,x1,x1
+sw x3,0(x0)
+lw x5,0(x0)
+add x4,x5,x5
+lw x2,0(x0)
+sw x2,2(x0)
+
+
+00500093
+00108133
+001081b3
+00108233
+00302023
+00002283
+00528233
+00002103
+00202123
+
+
+
+
+//-------------------------------  overall test code 2 -----------------------------//
+addi x0, x0,10
+addi x1, x0, 5
+addi x2, x0, 1
+addi x3, x0, 2
+addi x4, x0, 1
+add x5, x1, x3
+sw x5, 0(x0)
+lw x7, 0(x0) //use after load. STALL
+sub x1, x7, x1
+add x1,x1,x2// rd used as rs1 handled
+add x1,x1,x3
+add x1,x1,x4
+lw x1, 0(x0) //mem2mem transfer
+sw x1, 1(x0)
+
+00a00013
+00500093
+00100113
+00200193
+00100213
+003082b3
+00502023
+00002383
+401380b3
+002080b3
+003080b3
+004080b3
+00002083
+001020a3
+
+//-------------------------------  test 3 (alu operations) -----------------------------//
+
+addi x2, x0, 0
+addi x3, x0, -3
+sub x4, x2, x3
+slli x4, x3, 1
+srli x4, x3, 8
+srai x4, x3, 8
+slt x4, x2, x3
+slti x5, x2, -3
+sltiu x6, x2, -3
+addi x2, x0, -128
+addi x3, x0, 8
+xor x4, x2,x3
+and x4, x2,x3
+srl x4, x2,x3
+sra x4, x2,x3
+or x4, x2,x3
+
+
+
+00000113
+ffd00193
+40310233
+00119213
+0081d213
+4081d213
+00312233
+ffd12293
+ffd13313
+f8000113
+00800193
+00314233
+00317233
+00315233
+40315233
+00316233
+
+//-------------------------------  test 4 (lb,lbu,lhu,lh,lw) -----------------------------//
+
+addi x1, x0, -431
+sw x1, 0(x0)
+lb x2, 1(x0)
+lbu x3,1(x0)
+lh x4, 2(x0)
+lhu x5, 2(x0)
+
+e5100093
+00102023
+00100103
+00104183
+00201203
+00205283
+
+
+
+
+
+
+
+
+
+
